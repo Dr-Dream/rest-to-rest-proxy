@@ -9,8 +9,11 @@ import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class SubscriptionRouter(context: CamelContext?, val processor: SubscriptionProcessor) : RouteBuilder(context) {
+    companion object {
+        const val SUBSCRIBE = "seda:subscribe"
+    }
     override fun configure() {
-        from("seda:subscribe")
+        from(SUBSCRIBE)
             .routeId("subscription-route")
             .log("New client subscription.")
             .process { exchange ->

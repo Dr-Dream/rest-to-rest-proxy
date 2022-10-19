@@ -4,17 +4,19 @@ import com.dm.net.proxy.model.HttpRequestMessage
 import com.dm.net.proxy.model.HttpResponseMessage
 import com.dm.net.proxy.processor.SubscriptionProcessor
 import com.dm.net.proxy.routes.CamelHttpRouteBuilder.Companion.CONTROLLER_OUTPUT
+import com.dm.net.proxy.routes.ServerWebsocketRoute.Companion.AGENT_DOWNSTREAM
 import org.apache.camel.CamelContext
-import org.apache.camel.Exchange
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.vertx.websocket.VertxWebsocketConstants
 import javax.enterprise.context.ApplicationScoped
-import javax.ws.rs.NotFoundException
 
 @ApplicationScoped
 class RequestDispatcher(context: CamelContext?, val subscriptions: SubscriptionProcessor) : RouteBuilder(context) {
+    companion object {
+        const val REQUEST_DISPATCHER = "seda:request-dispatcher"
+    }
     override fun configure() {
-        from("seda:request-dispatcher")
+        from(REQUEST_DISPATCHER)
             .routeId("request-dispatcher")
             .log("Request dispatch.")
             .choice().`when`(body().isInstanceOf(HttpRequestMessage::class.java)).to("seda:agent-call")
@@ -38,6 +40,6 @@ class RequestDispatcher(context: CamelContext?, val subscriptions: SubscriptionP
                     }
                     .to(CONTROLLER_OUTPUT)
             .otherwise()
-                .to("seda:responses")
+                .to(AGENT_DOWNSTREAM)
     }
 }

@@ -7,19 +7,23 @@ import io.smallrye.mutiny.Uni
 import io.vertx.core.http.HttpMethod
 import io.vertx.mutiny.core.Vertx
 import io.vertx.mutiny.core.buffer.Buffer
-import io.vertx.mutiny.ext.web.client.HttpRequest
 import io.vertx.mutiny.ext.web.client.WebClient
+import org.eclipse.microprofile.config.inject.ConfigProperty
+import java.time.Duration
 import javax.enterprise.context.ApplicationScoped
 import javax.ws.rs.core.UriBuilder
 
 @ApplicationScoped
 class ProxyWebClient(
-    vertx: Vertx
+    vertx: Vertx,
+    @ConfigProperty(name="client.uri")
+    val uri: String,
+    @ConfigProperty(name="client.timeout")
+    val timeout: Duration
 ) {
 
     companion object {
-        const val uri = "http://localhost:8080/s"
-        val log = logger()
+        private val log = logger()
     }
 
     private val client: WebClient = WebClient.create(vertx)
@@ -46,6 +50,7 @@ class ProxyWebClient(
 
         log.info("Starting request on {}:{}{}", httpRequest.host(), httpRequest.port(), httpRequest.uri())
         return httpRequest.sendBuffer(Buffer.buffer(body))
+
             .onItem().invoke { response ->
                 log.info(
                     "Response received: {} {} headers:{} body:{}",
@@ -55,6 +60,7 @@ class ProxyWebClient(
                     response.body()
                 )
             }
+            .ifNoItem().after(timeout).fail()
             .onItem().transform { response ->
                 HttpResponseMessage(
                     requestId = requestMessage.requestId,

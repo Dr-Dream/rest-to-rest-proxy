@@ -25,6 +25,7 @@ dependencies {
     implementation("org.apache.camel.quarkus:camel-quarkus-direct")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-jackson")
+    implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-resteasy-jackson")
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

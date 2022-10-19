@@ -12,7 +12,7 @@ quarkus:
 
 
 client:
-  uri: ${CLIENT_URI:http://localhost:8080/requestq/test}
+  uri: ${CLIENT_URI:http://localhost:8080}
   timeout: ${CLIENT_TIMEOUT:30}
 
 gateway:

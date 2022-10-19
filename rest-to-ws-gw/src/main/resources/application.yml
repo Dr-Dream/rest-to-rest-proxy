@@ -1,0 +1,8 @@
+"%dev":
+  quarkus:
+    log:
+      min-level: TRACE
+
+
+gateway:
+  timeout: ${GATEWAY_TIMEOUT:30}

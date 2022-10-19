@@ -1,13 +1,20 @@
+"%dev":
+  quarkus:
+    http:
+      port: 8081
+    log:
+      level: INFO
+      min-level: TRACE
+
 quarkus:
-  http:
-    port: 8081
-  log:
-    level: INFO
-    min-level: TRACE
-    category:
-      "io.netty":
-        level: DEBUG
-      "io.undertow":
-        level: DEBUG
   websocket:
     dispatch-to-worker: true
+
+
+client:
+  uri: ${CLIENT_URI:http://localhost:8080/requestq/test}
+  timeout: ${CLIENT_TIMEOUT:30}
+
+gateway:
+  uri: ${GATEWAY_URI:ws://localhost:8080/stream}
+  endpoint: ${GATEWAY_ENDPOINT:endpoint}

@@ -8,7 +8,7 @@ import org.apache.camel.component.jackson.JacksonDataFormat
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-class JacksonRouter(context: CamelContext?,val mapper: ObjectMapper) : RouteBuilder(context) {
+class JacksonRouter(context: CamelContext?,mapper: ObjectMapper) : RouteBuilder(context) {
     companion object {
         const val MARSHAL_ROUTE="seda:jackson-marshal?exchangePattern=InOut"
         const val UNMARSHAL_ROUTE="seda:jackson-unmarshal?exchangePattern=InOut"
@@ -19,19 +19,14 @@ class JacksonRouter(context: CamelContext?,val mapper: ObjectMapper) : RouteBuil
     override fun configure() {
         from(MARSHAL_ROUTE)
             .routeId("jackson-marshaller")
-            .log("Marshal \${body}")
-  //          .to("log:?level=INFO&showAll=true")
             .marshal(jacksonDataFormat)
             .setBody(body().convertToString())
-//            .log("Outgoing body \${body}")
 
         from(UNMARSHAL_ROUTE)
             .routeId("jackson-unmarshaller")
             .setBody(body().convertToString())
-//            .log("Incoming body \${body}")
             .log("Unmarshal \${body}")
             .unmarshal(jacksonDataFormat)
-//            .to("log:?level=INFO&showAll=true")
 
     }
 }

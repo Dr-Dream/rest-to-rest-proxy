@@ -16,9 +16,9 @@ import javax.ws.rs.core.UriBuilder
 @ApplicationScoped
 class ProxyWebClient(
     vertx: Vertx,
-    @ConfigProperty(name="client.uri")
+    @ConfigProperty(name = "client.uri")
     val uri: String,
-    @ConfigProperty(name="client.timeout")
+    @ConfigProperty(name = "client.timeout")
     val timeout: Duration
 ) {
 
@@ -48,7 +48,14 @@ class ProxyWebClient(
 
         val body: String = requestMessage.body ?: ""
 
-        log.info("Starting request on {}:{}{}", httpRequest.host(), httpRequest.port(), httpRequest.uri())
+        log.info(
+            "{} Starting '{}' request on {}:{}{}",
+            requestMessage.requestId,
+            httpRequest.method(),
+            httpRequest.host(),
+            httpRequest.port(),
+            httpRequest.uri()
+        )
         return httpRequest.sendBuffer(Buffer.buffer(body))
 
             .onItem().invoke { response ->

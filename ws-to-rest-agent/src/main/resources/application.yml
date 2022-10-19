@@ -1,0 +1,13 @@
+quarkus:
+  http:
+    port: 8081
+  log:
+    level: INFO
+    min-level: TRACE
+    category:
+      "io.netty":
+        level: DEBUG
+      "io.undertow":
+        level: DEBUG
+  websocket:
+    dispatch-to-worker: true

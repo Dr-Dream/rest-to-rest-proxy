@@ -22,6 +22,7 @@ dependencies {
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-jackson")
+    implementation("io.quarkus:quarkus-container-image-jib")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.smallrye.reactive:smallrye-mutiny-vertx-web-client")

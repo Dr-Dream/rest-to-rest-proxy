@@ -48,17 +48,25 @@ class WebsocketClient(
                 socket = ContainerProvider.getWebSocketContainer()
                     .connectToServer(WebsocketClient::class.java, URI.create(gatewayUri))
                 socket?.basicRemote?.sendObject(mapper.writeValueAsString(SubscribeMessage(gatewayEndpoint)))
+                bus.publish("send", mapper.writeValueAsString(SubscribeMessage(gatewayEndpoint)))
             } catch (e: Exception) {
                 log.warn("Exception during connect ", e)
             }
 
-        } else if (socket!=null && socket!!.isOpen ){
-            socket?.basicRemote?.sendObject(mapper.writeValueAsString(SubscribeMessage(gatewayEndpoint)))
+        } else {
+            bus.publish("send", mapper.writeValueAsString(SubscribeMessage(gatewayEndpoint)))
         }
     }
 
+    @ConsumeEvent("send",blocking=true,ordered=true)
+    fun socketSend(payload:String){
+        if (socket!=null && socket!!.isOpen )
+            socket?.basicRemote?.sendObject(payload)
+        else log.warn("No connection to send '{}'",payload)
+    }
 
-    lateinit var keepAlive: Cancellable
+
+    private lateinit var keepAlive: Cancellable
 
     fun onStart(@Observes event: StartupEvent) {
         log.info("StartUp")
@@ -106,7 +114,8 @@ class WebsocketClient(
                         log.info(
                             "Response sent {}",
                             item
-                        );session.basicRemote.sendObject(mapper.writeValueAsString(item))
+                        )
+                        bus.publish("send", mapper.writeValueAsString(item))
                     }
 
             }

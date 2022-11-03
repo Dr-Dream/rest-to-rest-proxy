@@ -28,4 +28,11 @@ class SubscriptionProcessor {
     fun getClientByEndpoint(endpoint: String): String? {
         return registry[endpoint]
     }
+
+    fun unsubscribe(clientKey: Any?) {
+        if( clientKey is String ) {
+            log.info("Unregistering {}",clientKey)
+            registry.entries.removeIf { it.value == clientKey }
+        }
+    }
 }

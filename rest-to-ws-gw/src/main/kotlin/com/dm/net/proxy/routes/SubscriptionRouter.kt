@@ -11,8 +11,18 @@ import javax.enterprise.context.ApplicationScoped
 class SubscriptionRouter(context: CamelContext?, val processor: SubscriptionProcessor) : RouteBuilder(context) {
     companion object {
         const val SUBSCRIBE = "seda:subscribe"
+        const val UNSUBSCRIBE = "seda:unsubscribe"
     }
     override fun configure() {
+        from(UNSUBSCRIBE)
+            .errorHandler(noErrorHandler())
+            .log("Unsubscribing client. \${body}")
+            .process { exchange -> processor.unsubscribe(exchange.`in`.body) }
+            .setBody(constant("OK"))
+
+
+
+
         from(SUBSCRIBE)
             .routeId("subscription-route")
             .log("New client subscription.")

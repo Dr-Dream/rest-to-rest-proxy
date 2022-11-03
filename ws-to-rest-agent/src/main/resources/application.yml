@@ -9,7 +9,13 @@
 quarkus:
   websocket:
     dispatch-to-worker: true
-
+  tls:
+    trust-all: true
+  ssl:
+    native: true
+  http:
+    ssl:
+      client-auth: none
 
 client:
   uri: ${CLIENT_URI:http://localhost:8080}

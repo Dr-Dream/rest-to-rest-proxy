@@ -5,6 +5,7 @@ import com.dm.net.proxy.model.HttpResponseMessage
 import com.dm.net.rest.proxy.logging.logger
 import io.smallrye.mutiny.Uni
 import io.vertx.core.http.HttpMethod
+import io.vertx.ext.web.client.WebClientOptions
 import io.vertx.mutiny.core.Vertx
 import io.vertx.mutiny.core.buffer.Buffer
 import io.vertx.mutiny.ext.web.client.WebClient
@@ -26,7 +27,11 @@ class ProxyWebClient(
         private val log = logger()
     }
 
-    private val client: WebClient = WebClient.create(vertx)
+    private val webClientOptions = WebClientOptions()
+        .setVerifyHost(false)
+        .setTrustAll(true)
+
+    private val client: WebClient = WebClient.create(vertx,webClientOptions)
 
     fun buildUri(requestMessage: HttpRequestMessage): String {
         val builder = UriBuilder.fromUri(uri)
@@ -42,9 +47,13 @@ class ProxyWebClient(
 
 
 
-        httpRequest.headers().add("X-WSProxy-For-Id", requestMessage.requestId)
+        httpRequest
+            .headers()
+            .add("X-WSProxy-For-Id", requestMessage.requestId)
 
-        requestMessage.headers.forEach { entry -> httpRequest.putHeader(entry.key, entry.value as String) }
+        requestMessage.headers
+            .filter { "Host"!=it.key }
+            .forEach { entry -> httpRequest.putHeader(entry.key, entry.value as String) }
 
         val body: String = requestMessage.body ?: ""
 

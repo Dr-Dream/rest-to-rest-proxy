@@ -1,4 +1,4 @@
-### Enterprise reverse proxy
+# Enterprise reverse proxy
 
 Consumes incoming HTTP requests and passes it to the remote agents through WebSocket.
 
@@ -32,7 +32,7 @@ sequenceDiagram
         AGENT -->> GW: Websocket: KeepAlive Ping
         GW -->> AGENT: Websocket: KeepAlive Pong
     end
-    CLIENT ->> GW: Http request
+    CLIENT ->> GW: Http request on /someAgentPath
     GW ->> AGENT: Websocket: HttpRequestMessage (with headers and payload)
     AGENT ->> DEVELOPMENT SERVICE: Http request (Host replaced)
     DEVELOPMENT SERVICE ->> AGENT: Http response
